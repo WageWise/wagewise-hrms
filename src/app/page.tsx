@@ -1,4 +1,3 @@
-import { AuthForm } from "@/components/auth/authForm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
