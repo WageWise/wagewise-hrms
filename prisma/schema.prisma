@@ -344,8 +344,8 @@ model user_profiles {
 }
 
 model company_profiles {
-  id   String  @id @default(uuid())
-  name String? @unique
+  id   String @id @default(uuid())
+  name String
 
   members   user_profiles[]
   createdAt DateTime        @default(now())
