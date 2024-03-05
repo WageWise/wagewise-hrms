@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import { publicProcedure, router, createCallerFactory } from "./trpc";
+import { publicProcedure, router, createServerCaller } from "./trpc";
 import { authRouter } from "./auth-router";
 import { getUserProfile } from "../actions/profile";
+import { inferRouterOutputs } from "@trpc/server";
+
 
 export const appRouter = router({
   authRouter,
@@ -19,3 +21,6 @@ export const appRouter = router({
 });
 
 export type AppRouter = typeof appRouter;
+
+export type RouterOutput = inferRouterOutputs<AppRouter>;
+export const trpcServer = createServerCaller(appRouter);

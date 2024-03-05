@@ -1,5 +1,6 @@
 import { TRPCError, initTRPC } from "@trpc/server";
-import { Context } from "./context";
+import { Context, createContext } from "./context";
+import { AppRouter } from ".";
 
 const t = initTRPC.context<Context>().create();
 const middleware = t.middleware;
@@ -20,4 +21,5 @@ const isAuth = middleware(async ({ ctx, next }) => {
 export const router = t.router;
 export const publicProcedure = t.procedure;
 export const privateProceduce = t.procedure.use(isAuth);
-export const createCallerFactory = t.createCallerFactory;
+export const createServerCaller = (appRouter: AppRouter) =>
+  t.createCallerFactory(appRouter)(createContext)

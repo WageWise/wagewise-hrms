@@ -7,9 +7,6 @@ export const getUserProfile = privateProceduce.query(async ({ ctx }) => {
     where: {
       user_id: user.id,
     },
-    include: {
-      company_profiles: true,
-    },
   });
 
   return profile;

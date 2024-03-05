@@ -12,39 +12,29 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Nav } from "./nav";
-import {
-  AlertCircle,
-  Archive,
-  ArchiveX,
-  File,
-  Inbox,
-  MessagesSquare,
-  PenBox,
-  Search,
-  Send,
-  Settings,
-  ShoppingCart,
-  Table,
-  Trash2,
-  Users,
-  Users2,
-} from "lucide-react";
-import { trpc } from "@/lib/trpc/client/client";
+import { Inbox, Settings, Table, UserRoundCog, Users } from "lucide-react";
+import { RouterOutput } from "@/lib/trpc/server";
 
 interface DashboardProps {
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
+  userProfile: RouterOutput["getUserProfile"];
+  children: React.ReactNode;
 }
 
 const Dashboard = ({
   defaultLayout = [265, 1095],
   defaultCollapsed = false,
   navCollapsedSize,
+  userProfile,
+  children,
 }: DashboardProps) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
 
-  const { data, error, isLoading } = trpc.getUserProfile.useQuery();
+  if (!userProfile) return null;
+
+  const { email, lastName } = userProfile;
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -98,31 +88,28 @@ const Dashboard = ({
             links={[
               {
                 title: "Dashboard",
+                path: "/dashboard",
                 icon: Inbox,
-                variant: "default",
               },
               {
                 title: "Payroll",
                 label: "",
                 icon: Table,
-                variant: "ghost",
               },
               {
                 title: "Members",
                 label: "12",
                 icon: Users,
-                variant: "ghost",
               },
               {
                 title: "Profile",
                 label: "",
-                icon: ArchiveX,
-                variant: "ghost",
+                path: "/dashboard/profile",
+                icon: UserRoundCog,
               },
               {
                 title: "Settings",
                 icon: Settings,
-                variant: "ghost",
               },
             ]}
           />
@@ -131,14 +118,10 @@ const Dashboard = ({
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <div className="flex items-center px-4 py-2 h-[52px] justify-between">
             <h1 className="text-lg font-medium">Dashboard</h1>
-            <UserNav email={data?.email} />
+            <UserNav email={email} lastName={lastName} />
           </div>
           <Separator />
-          <div className="px-4 py-2">
-            <h2 className="text-lg font-bold">
-              {data?.company_profiles?.name}
-            </h2>
-          </div>
+          {children}
         </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>
